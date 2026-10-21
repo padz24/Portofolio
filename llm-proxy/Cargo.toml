@@ -1,0 +1,11 @@
+[package]
+name = "llm-proxy"
+version = "0.1.0"
+edition = "2021"
+description = "Bounded, command-aware developer output for coding agents"
+license = "MIT"
+
+[profile.release]
+lto = true
+codegen-units = 1
+strip = true

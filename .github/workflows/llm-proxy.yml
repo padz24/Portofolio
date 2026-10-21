@@ -1,0 +1,27 @@
+name: llm-proxy
+on:
+  push:
+    paths: ['llm-proxy/**', '.github/workflows/llm-proxy.yml']
+  pull_request:
+    paths: ['llm-proxy/**', '.github/workflows/llm-proxy.yml']
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: llm-proxy
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - run: rustup component add rustfmt clippy
+      - run: cargo fmt --check
+      - run: cargo clippy --locked --offline --all-targets -- -D warnings
+      - run: cargo test --locked --offline
+      - run: RUSTFLAGS='-C target-feature=+crt-static' cargo build --locked --release --offline
+      - uses: actions/upload-artifact@v4
+        with:
+          name: llm-proxy-linux-x86_64
+          path: llm-proxy/target/release/llm-proxy
